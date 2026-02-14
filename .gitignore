@@ -1,0 +1,13 @@
+# --- Security (NEVER PUSH THESE) ---
+.env
+.env.yml
+.DS_Store
+
+# --- Python ---
+__pycache__/
+*.pyc
+
+# --- Virtual Environments ---
+venv/
+.venv/
+env/
