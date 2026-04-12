@@ -90,6 +90,18 @@ model.run(max_evals=50)
 model.save("lajolla_viz_model.json")
 ```
 
+## Future Work: Live Forecasting and Inference
+
+Currently, this pipeline focuses on training the model using historical oceanographic and meteorological data paired with past dive reports. The next major phase of this project involves shifting from historical analysis to live predictive inference.
+
+To achieve this, future updates will implement a dedicated forecasting pipeline. Instead of fetching archived data to learn past conditions, the system will pull forecasted data to predict future visibility. The trained XGBoost model will ingest these forecasts as features to give divers an advance look at upcoming conditions before they head to the beach.
+
+Planned updates include:
+* **Forecast API Integration:** Swapping historical data endpoints for forecast endpoints. This includes integrating CDIP wave model forecasts, NOAA wind and tide predictions, and OpenWeatherMap future rainfall estimates.
+* **Live Inference Pipeline:** Building a serving layer that automatically fetches 48 to 72 hour forecasts, applies the exact same feature engineering used during the training phase, and feeds the formatted data into the saved model to generate a visibility prediction.
+* **Automated Updates:** Setting up a scheduled job to pull new forecasts daily and output the expected go or no-go conditions for the upcoming week.
+* **Continuous Learning:** Creating a feedback loop where new dive reports are periodically scraped and added to the training dataset so the model can be retrained and calibrated over time.
+
 ## Project Structure
 
 - `ocean_data_generator.py`: Handles API connections, scraping, and dataframe merging.
