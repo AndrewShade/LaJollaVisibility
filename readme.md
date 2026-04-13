@@ -23,6 +23,11 @@ The system supports binary classification (Go/No-Go), multi-class classification
   - **Classification**: Predicts categorical conditions (Poor, Fair, Good, Excellent).
   - **Regression**: Predicts exact visibility distance in feet.
 
+### Forecasting & Inference (`OceanForecastGenerator` & `OceanInference`)
+- **Live Forecasts**: Integrates the Open-Meteo Marine API for mathematical wave simulations, alongside OpenWeatherMap and NOAA APIs, to build a forward-looking feature set.
+- **Dynamic Alignment**: Automatically aligns forecast features with the specific XGBoost model architecture to prevent strict ordering errors.
+- **Flexible Outputs**: Seamlessly routes logic to handle Regressors, Binary Classifiers, and Multi-class Classifiers, outputting a clean schedule of predicted conditions.
+
 ## Prerequisites
 
 - Python 3.10+ (Developed on 3.12)
@@ -90,22 +95,47 @@ model.run(max_evals=50)
 model.save("lajolla_viz_model.json")
 ```
 
-## Future Work: Live Forecasting and Inference
+### 3. Forecast Generation
+Generate a forward-looking dataset for the upcoming days.
 
-Currently, this pipeline focuses on training the model using historical oceanographic and meteorological data paired with past dive reports. The next major phase of this project involves shifting from historical analysis to live predictive inference.
+```python
+from ocean_forecast_generator import OceanForecastGenerator
 
-To achieve this, future updates will implement a dedicated forecasting pipeline. Instead of fetching archived data to learn past conditions, the system will pull forecasted data to predict future visibility. The trained XGBoost model will ingest these forecasts as features to give divers an advance look at upcoming conditions before they head to the beach.
+# Fetch live forecast data
+forecast_gen = OceanForecastGenerator()
+forecast_df = forecast_gen.run_forecast()
 
-Planned updates include:
-* **Forecast API Integration:** Swapping historical data endpoints for forecast endpoints. This includes integrating CDIP wave model forecasts, NOAA wind and tide predictions, and OpenWeatherMap future rainfall estimates.
-* **Live Inference Pipeline:** Building a serving layer that automatically fetches 48 to 72 hour forecasts, applies the exact same feature engineering used during the training phase, and feeds the formatted data into the saved model to generate a visibility prediction.
-* **Automated Updates:** Setting up a scheduled job to pull new forecasts daily and output the expected go or no-go conditions for the upcoming week.
-* **Continuous Learning:** Creating a feedback loop where new dive reports are periodically scraped and added to the training dataset so the model can be retrained and calibrated over time.
+# Save to parquet in the data folder
+forecast_gen.save_forecast(forecast_df)
+```
+
+### 4. Running Predictions
+Load your saved model and apply it to the new forecast data.
+
+```python
+from ocean_inference import OceanInference
+
+# Initialize inference (supports 'regressor', 'binary', or 'classifier')
+inference = OceanInference(model_path="lajolla_viz_model.json", model_type="binary")
+
+# Run prediction (e.g., probability threshold of 0.4 for a 'Go')
+upcoming_forecast = inference.run_predictions(threshold=0.4)
+print(upcoming_forecast)
+```
+
+## Future Work
+
+With the core training and live inference pipelines complete, future updates will focus on automation and system longevity:
+
+* **Automated Updates:** Setting up a scheduled cron job or GitHub Action to pull new forecasts daily and output the expected go or no-go conditions for the upcoming week automatically.
+* **Continuous Learning:** Creating a feedback loop where new dive reports are periodically scraped and added to the historical training dataset so the model can be retrained and calibrated over time.
 
 ## Project Structure
 
-- `ocean_data_generator.py`: Handles API connections, scraping, and dataframe merging.
-- `unified_ocean_model.py`: Handles model training, evaluation, and plotting.
+- `ocean_data_generator.py`: Handles historical API connections, scraping, and dataframe merging.
+- `unified_ocean_model.py`: Handles model training, evaluation, and tuning.
+- `ocean_forecast_generator.py`: Builds the live forecast feature set.
+- `ocean_inference.py`: Wraps the trained model and forecast data to generate predictions.
 - `requirements.txt`: Python package dependencies.
 - `.env`: Configuration secrets (excluded from Git).
 - `.gitignore`: Standard exclusion rules.
