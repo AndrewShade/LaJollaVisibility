@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Andrew Shade\\\\Repos\\\\LaJollaVisibility\" -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "Bash(ConvertTo-Csv -NoTypeInformation)",
+      "Bash(Write-Output)",
+      "Bash(git fetch *)",
+      "Bash(git checkout *)",
+      "Bash(git rebase *)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\Andrew Shade\\\\Repos\\\\LaJollaVisibility\\\\ocean_data_generator.py\", \"c:\\\\Users\\\\Andrew Shade\\\\Repos\\\\LaJollaVisibility\\\\ocean_forecast_generator.py\", \"c:\\\\Users\\\\Andrew Shade\\\\Repos\\\\LaJollaVisibility\\\\unified_ocean_model.py\", \"c:\\\\Users\\\\Andrew Shade\\\\Repos\\\\LaJollaVisibility\\\\ocean_inference.py\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}
