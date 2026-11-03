@@ -1,0 +1,23 @@
+{
+ "go_threshold": 0.1,
+ "go_definition": "Excellent",
+ "features": [
+  "pier_turbidity_med_lag1",
+  "pier_turbidity_max_lag1",
+  "pier_chl_med_lag1",
+  "pier_cdom_med_lag1",
+  "waveHs_mean_lag1",
+  "waveHs_max_lag1",
+  "rain_72h_weighted_mm_lag1",
+  "wind_speed_lag1",
+  "wavePeakPSD_max_lag1",
+  "sstSeaSurfaceTemperature_lag1",
+  "season_sine",
+  "season_cos"
+ ],
+ "seeds": {
+  "go": 3,
+  "cls": 3
+ },
+ "trained_through": "2026-10-19"
+}
